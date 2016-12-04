@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+venv/*
 env/
 build/
 develop-eggs/
@@ -49,8 +50,11 @@ coverage.xml
 *.mo
 *.pot
 .idea/*
+example2/.idea/*
+example2/emp-venv/*
 .DS_Store
 example/basic_app.sqlite
+example2/example2.sqlite
 
 # Django stuff:
 *.log
