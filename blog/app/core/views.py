@@ -6,7 +6,7 @@
 from flask import redirect, render_template, render_template_string, Blueprint
 from flask import request, url_for
 from flask_user import current_user, login_required, roles_accepted
-from app import myapp, db
+from app import app, db
 from app.core.models import UserProfileForm
 
 core_blueprint = Blueprint('core', __name__, url_prefix='/')
@@ -16,6 +16,11 @@ core_blueprint = Blueprint('core', __name__, url_prefix='/')
 @core_blueprint.route('')
 def home_page():
     return render_template('core/home_page.html')
+
+
+@core_blueprint.route('test')
+def test_page():
+    return 'test for pro'
 
 
 # The User page is accessible to authenticated users (users that have logged in)
@@ -55,4 +60,4 @@ def user_profile_page():
 
 
 # Register blueprint
-myapp.register_blueprint(core_blueprint)
+app.register_blueprint(core_blueprint)

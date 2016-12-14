@@ -1,0 +1,64 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+
+
+<h3>
+    <a href="{{ url_for('core_articles.articles_create_page') }}">Create an article</a>
+</h3>
+
+
+<h3>
+    <a href="{{ url_for('core_articles.articles_list_page') }}">View all articles</a>
+</h3>
+
+<h1>My articles list</h1>
+
+
+{% if articles%}
+    <div class="row">
+        <div class="col-sm-6 col-md-5 col-lg-4">
+
+            <table align="center" border="1">
+                <tr>
+                  <th align="center">title</th>
+                  <th align="center">author</th>
+                  <th align="center">createAt</th>
+
+
+
+
+
+                  <th>updateAt</th>
+                  <th align="center">operation</th>
+                </tr>
+
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.title }}</td>
+                        <td>{{ article.author }}</td>
+                        <!--<td>{{ article.create_at }}</td>-->
+                        <td> {{ moment().fromTime(article.create_at) }} </td>
+
+                        {% if article.update_at%}
+                            <!--<td>{{ article.update_at }}</td>-->
+                            <td> {{ moment().fromTime(article.update_at) }} </td>
+                        {% else %}
+                            <!--<td>{{ article.create_at }}</td>-->
+                            <td> {{ moment().fromTime(article.create_at) }} </td>
+                        {% endif %}
+                        <td align="center">
+                            <a href="{{ url_for('core_articles.articles_edit_form', article_id=article.id) }}">edit</a>
+                            <a href="{{ url_for('core_articles.articles_delete_form', article_id=article.id) }}">delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div>
+{% else %}
+    <h3>no articles owed by you!!!</h3>
+{% endif %}
+
+{% endblock %}

@@ -1,11 +1,10 @@
 from datetime import datetime
-from app import myapp, db
+from app import app, db
 from app.core.models import User, Role
 
 
 def create_users():
     """ Create users when app starts """
-    from app.core.models import User, Role
 
     # Create all tables
     db.create_all()
@@ -37,7 +36,7 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
         user = User(email=email,
                     first_name=first_name,
                     last_name=last_name,
-                    password=myapp.user_manager.hash_password(password),
+                    password=app.user_manager.hash_password(password),
                     active=True,
                     confirmed_at=datetime.utcnow())
         if role:

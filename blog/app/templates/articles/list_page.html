@@ -1,0 +1,53 @@
+{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+<h3>
+    <a href="{{ url_for('core_articles.articles_create_page') }}">Create an article</a>
+</h3>
+
+
+<h3>
+    <a href="{{ url_for('core_articles.articles_own_page') }}">View my articles</a>
+</h3>
+
+<h1>All articles list</h1>
+
+
+{% if articles%}
+    <div class="row">
+        <div class="col-sm-6 col-md-5 col-lg-4">
+
+            <table align="center" border="1">
+                <tr>
+                  <th>title</th>
+                  <th>author</th>
+                  <th>updateAt</th>
+                  <!--<th >operation</th>-->
+                </tr>
+
+                {% for article in articles %}
+                    <tr>
+                        <td>{{ article.title }}</td>
+                        <td>{{ article.author }}</td>
+
+                        {% if article.update_at%}
+                            <!--<td>{{ article.update_at }}</td>-->
+                            <td> {{ moment().fromTime(article.update_at) }} </td>
+
+                        {% else %}
+                            <!--<td>{{ article.create_at }}</td>-->
+                            <td> {{ moment().fromTime(article.create_at) }} </td>
+
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    </div>
+{% else %}
+    <h3>no articles left...</h3>
+{% endif %}
+
+
+{% endblock %}

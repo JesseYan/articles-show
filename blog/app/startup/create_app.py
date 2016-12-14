@@ -7,10 +7,10 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_user import UserManager, SQLAlchemyAdapter
 from flask_wtf.csrf import CsrfProtect
 import os
-from app import myapp, db, manager
+from app import app, db, manager
 
 
-@myapp.before_first_request
+@app.before_first_request
 def initialize_app_on_first_request():
     """ Create users and roles tables on first HTTP request """
     from .create_users import create_users
@@ -24,25 +24,25 @@ def create_app(extra_config_settings={}):
 
     # ***** Initialize app config settings *****
     # Read common settings from 'app/startup/common_settings.py' file
-    myapp.config.from_object('app.startup.common_settings')
+    app.config.from_object('app.startup.common_settings')
     # Read environment-specific settings from file defined by OS environment variable 'ENV_SETTINGS_FILE'
-    env_settings_file = os.environ.get('ENV_SETTINGS_FILE', 'env_settings_example.py')
-    myapp.config.from_pyfile(env_settings_file)
+    env_settings_file = os.environ.get('ENV_SETTINGS_FILE', 'env_settings.py')
+    app.config.from_pyfile(env_settings_file)
     # Read extra config settings from function parameter 'extra_config_settings'
-    myapp.config.update(extra_config_settings)  # Overwrite with 'extra_config_settings' parameter
-    if myapp.testing:
-        myapp.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF checks while testing
+    app.config.update(extra_config_settings)  # Overwrite with 'extra_config_settings' parameter
+    if app.testing:
+        app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF checks while testing
 
 
     # Setup Flask-Migrate
-    migrate = Migrate(myapp, db)
+    migrate = Migrate(app, db)
     manager.add_command('db', MigrateCommand)
 
     # Setup Flask-Mail
-    mail = Mail(myapp)
+    mail = Mail(app)
 
     # Setup WTForms CsrfProtect
-    CsrfProtect(myapp)
+    CsrfProtect(app)
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
@@ -50,17 +50,17 @@ def create_app(extra_config_settings={}):
     def is_hidden_field_filter(field):
         return isinstance(field, HiddenField)
 
-    myapp.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
+    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup an error-logger to send emails to app.config.ADMINS
-    init_email_error_handler(myapp)
+    init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
     from app.core.models import User, MyRegisterForm
     from app.core.views import user_profile_page
 
     db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
-    user_manager = UserManager(db_adapter, myapp,  # Init Flask-User and bind to app
+    user_manager = UserManager(db_adapter, app,  # Init Flask-User and bind to app
                                register_form=MyRegisterForm,  # using a custom register form with UserProfile fields
                                user_profile_view_function=user_profile_page,
     )
@@ -68,7 +68,7 @@ def create_app(extra_config_settings={}):
     # Load all blueprints with their manager commands, models and views
     from app import core
 
-    return myapp
+    return app
 
 
 def init_email_error_handler(app):
